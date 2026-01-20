@@ -8,10 +8,11 @@ import { DatosElectricosService } from '../../services/datos-electricos.service'
   templateUrl: './datos.component.html',
   styleUrl: './datos.component.css'
 })
-export class DatosComponent implements OnInit{
+export class DatosComponent implements OnInit {
 
   datosDescargados: any = [];
   datosProcesados: DatosElectricos = { titulo: '', tecnologias: [] };
+  cargando: boolean = true;
 
   constructor(private _datosElectricos: DatosElectricosService) {
 
@@ -22,15 +23,16 @@ export class DatosComponent implements OnInit{
   }
 
   leerDatosElectricos() {
+    this.cargando = true;
     this._datosElectricos.obtenerDatos().subscribe({
       next: (respuestaApi) => {
         this.datosProcesados.titulo = respuestaApi.data.attributes.title;
         this.datosDescargados = respuestaApi.included;
-        this.datosDescargados.forEach( (element: any) => {
-          let tecnologia: DetalleTecnologia = {titulo:'', renovable: false, valores: []};
+        this.datosDescargados.forEach((element: any) => {
+          let tecnologia: DetalleTecnologia = { titulo: '', renovable: false, valores: [] };
           tecnologia.titulo = element.attributes.title;
           tecnologia.renovable = element.attributes.type == 'Renovable' ? true : false;
-          element.attributes.values.forEach( (value: any) => {
+          element.attributes.values.forEach((value: any) => {
             const registro: RegistroIndividual = {
               fecha: value.datetime,
               valor: value.value
@@ -39,9 +41,8 @@ export class DatosComponent implements OnInit{
           });
           this.datosProcesados.tecnologias.push(tecnologia);
         });
-        
+        this.cargando = false;
         console.log(respuestaApi);
-        console.log(`Titulo: ${this.datosProcesados.tecnologias[1].titulo}  fecha: ${this.datosProcesados.tecnologias[1].valores[2].fecha}`)
       },
       error: (err) => {
         console.log(err);
@@ -49,6 +50,14 @@ export class DatosComponent implements OnInit{
     })
   }
 
+  extraerDia(fechaInput: Date | string): string {
+    const fecha = new Date(fechaInput);
+    // Usamos padStart para que el día 3 se vea como "03"
+    return fecha.getDate().toString().padStart(2, '0');
+  }
 
+  sinDecimales (numero: number): string {
+    return Math.trunc(numero).toString();
+  }
 
 }

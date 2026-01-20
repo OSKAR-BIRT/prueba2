@@ -1,5 +1,30 @@
 <div class="container">DATOS ELECTRICOS</div>
 <div class="container">
     <p>TITULO: {{datosProcesados.titulo}}</p>
-    <pre>{{datosProcesados.tecnologias[1].titulo}}  {{datosProcesados.tecnologias[1].valores[1].valor}}</pre>
+
+    <div *ngIf="!cargando && datosProcesados.tecnologias.length===0">
+        NO HAY DATOS QUE MOSTRAR
+    </div>
+
+    <table *ngIf="!cargando && datosProcesados.tecnologias.length>0">
+        <thead>
+            <tr>
+                <th>Tecnología</th>
+                <th *ngFor="let registro of datosProcesados.tecnologias[0].valores">
+                    {{ extraerDia(registro.fecha)}}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let tecnologia of datosProcesados.tecnologias">
+                <td>{{tecnologia.titulo}}</td>
+                <td *ngFor="let registro of tecnologia.valores">
+                    {{sinDecimales(registro.valor)}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+
 </div>
