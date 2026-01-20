@@ -3,8 +3,15 @@ export interface RegistroIndividual {
     valor: number
 }
 
-export interface DatosElectricos {
-    tipo: string,
-    renovable: boolean,
-    datos: RegistroIndividual[]
+export interface DetalleTecnologia {
+    titulo: string;
+    renovable: boolean;
+    valores: RegistroIndividual[]
 }
+
+export interface DatosElectricos {
+    titulo: string,
+    tecnologias: DetalleTecnologia[]
+}
+
+

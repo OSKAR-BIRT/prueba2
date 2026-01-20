@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RegistroIndividual, DatosElectricos } from '../../models/datos-electricos';
+import { RegistroIndividual, DetalleTecnologia, DatosElectricos } from '../../models/datos-electricos';
 import { DatosElectricosService } from '../../services/datos-electricos.service';
 
 @Component({
@@ -11,7 +11,7 @@ import { DatosElectricosService } from '../../services/datos-electricos.service'
 export class DatosComponent implements OnInit{
 
   datosDescargados: any = [];
-  datosElectricos!: DatosElectricos;
+  datosProcesados: DatosElectricos = { titulo: '', tecnologias: [] };
 
   constructor(private _datosElectricos: DatosElectricosService) {
 
@@ -22,9 +22,26 @@ export class DatosComponent implements OnInit{
   }
 
   leerDatosElectricos() {
-    this.datosDescargados = this._datosElectricos.obtenerDatos().subscribe({
-      next: (data) => {
-        console.log(data);
+    this._datosElectricos.obtenerDatos().subscribe({
+      next: (respuestaApi) => {
+        this.datosProcesados.titulo = respuestaApi.data.attributes.title;
+        this.datosDescargados = respuestaApi.included;
+        this.datosDescargados.forEach( (element: any) => {
+          let tecnologia: DetalleTecnologia = {titulo:'', renovable: false, valores: []};
+          tecnologia.titulo = element.attributes.title;
+          tecnologia.renovable = element.attributes.type == 'Renovable' ? true : false;
+          element.attributes.values.forEach( (value: any) => {
+            const registro: RegistroIndividual = {
+              fecha: value.datetime,
+              valor: value.value
+            }
+            tecnologia.valores.push(registro);
+          });
+          this.datosProcesados.tecnologias.push(tecnologia);
+        });
+        
+        console.log(respuestaApi);
+        console.log(`Titulo: ${this.datosProcesados.tecnologias[1].titulo}  fecha: ${this.datosProcesados.tecnologias[1].valores[2].fecha}`)
       },
       error: (err) => {
         console.log(err);
