@@ -7,9 +7,9 @@ import { HomeComponent } from './components/home/home.component';
 import { DatosComponent } from './components/datos/datos.component';
 import { UsuariosComponent } from './components/usuarios/usuarios.component';
 import { LoginComponent } from './components/login/login.component';
-import { provideHttpClient } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { FormsModule } from '@angular/forms';
+import { provideHttpClient } from '@angular/common/http';
 
 @NgModule({
   declarations: [
